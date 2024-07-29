@@ -14,7 +14,6 @@
         #sizer {
             height: 4829px;
             width: 1970px;
-            position: absolute;
             top: 150px;
             left: 0;
             background: transparent;
@@ -27,16 +26,33 @@
             padding: 0;
             background: transparent;
         }
+
+        .againBtn {
+            display: flex;
+            border: 1px solid teal;
+            padding: 15px;
+            text-decoration: none;
+            flex-shrink: 1;
+        }
+
+        .container {
+            margin-top: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-items: center;
+            align-items: center;
+        }
     </style>
 </head>
 <body id="body" style="background: transparent">
-<a href="/">Export again</a>
-<br>
-<br>
-<br>
-<br>
-<div class="sizer" id="sizer"></div>
-<div id="shower"></div>
+<div class="container">
+    <a href="/" class="againBtn">Export again</a>
+    <p>
+    <h3>Your sprite download should have started automatically, if not, then check the page permissions.</h3>
+    </p>
+    <div class="sizer" id="sizer"></div>
+    <div id="shower"></div>
+</div>
 <script type="module" defer>
     const scale = {{$scale}};
     const height = {{$height}};
@@ -94,6 +110,7 @@
                 // Here you can use the frames array, which contains base64 data URLs
                 // You can display them, download them, or process them further
             });
+            sizer.appendChild(canvas);
         }
     }
 
@@ -195,6 +212,7 @@
             // Optionally, you can add additional attributes or styles
             img.alt = 'Generated Image';
             img.style.margin = '5px';
+            img.style.opacity = 0;
 
             // Append the image to the container
             container.appendChild(img);
