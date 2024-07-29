@@ -45,8 +45,8 @@
     const asset_path = "{{$asset_path}}";
     const has_animation = {{$has_animation?'true':'false'}};
     const sizer = document.getElementById('sizer');
-    const real_height = 4824;
-    const real_width = 2000;
+    const real_height = {{$real_height}};
+    const real_width = {{$real_width}};
     const scaled_height = real_height * scale;
     const scaled_width = real_width * scale;
 

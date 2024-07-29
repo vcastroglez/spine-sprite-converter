@@ -36,6 +36,8 @@ Route::post('/convert', function(Request $request){
     $atlas = $request->file('atlas_upload');
     $png = $request->file('png_upload');
     $frames = (int) $request->get('frames');
+    $real_width = (int) $request->get('real_width');
+    $real_height = (int) $request->get('real_height');
 
 
     $skel_name = $skel->getClientOriginalName();
@@ -55,6 +57,8 @@ Route::post('/convert', function(Request $request){
 
     return response()->view('converter', [
         'frames' => $frames,
+        'real_width' => $real_width,
+        'real_height' => $real_height,
         'asset_path' => asset($skel_path),
         'has_animation' => true,
         'scale' => $request->get('scale', 0.2),
