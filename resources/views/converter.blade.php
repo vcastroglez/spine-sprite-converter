@@ -15,7 +15,7 @@
             height: 4829px;
             width: 1970px;
             position: absolute;
-            top: 0;
+            top: 150px;
             left: 0;
             background: transparent;
         }
@@ -30,6 +30,11 @@
     </style>
 </head>
 <body id="body" style="background: transparent">
+<a href="/">Export again</a>
+<br>
+<br>
+<br>
+<br>
 <div class="sizer" id="sizer"></div>
 <div id="shower"></div>
 <script type="module" defer>
@@ -84,7 +89,6 @@
             app.stage.addChild(spine);
             spine.state.setAnimation(0, 'Idle', true);
             captureSpineFrames(app, spine, frames).then((frames) => {
-                console.log('Captured frames:', frames);
                 attachImagesToContainer(frames, 'shower')
                 createAndDownloadSpriteSheet(frames);
                 // Here you can use the frames array, which contains base64 data URLs
