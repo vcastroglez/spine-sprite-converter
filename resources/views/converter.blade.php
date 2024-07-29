@@ -14,14 +14,13 @@
         #sizer {
             height: 4829px;
             width: 1970px;
-            top: 150px;
             left: 0;
             background: transparent;
         }
 
         #body {
             height: 100%;
-            width: fit-content;
+            width: 100%;
             margin: 0;
             padding: 0;
             background: transparent;
@@ -33,14 +32,24 @@
             padding: 15px;
             text-decoration: none;
             flex-shrink: 1;
+            cursor: pointer;
         }
 
         .container {
-            margin-top: 200px;
+            margin-top: 50px;
             display: flex;
             flex-direction: column;
             justify-items: center;
             align-items: center;
+            align-content: center;
+        }
+
+        .row {
+            margin-top: 50px;
+            flex-direction: row;
+            gap: 20px;
+            width: 100%;
+            justify-content: center;
         }
 
         canvas {
@@ -49,54 +58,126 @@
     </style>
 </head>
 <body id="body" style="background: transparent">
+
+<div class="container row">
+    With: <span id="width-span"></span>
+    <button class="btn-size width p">+</button>
+    <button class="btn-size width l">-</button>
+    Height:<span id="height-span"></span>
+    <button class="btn-size height p">+</button>
+    <button class="btn-size height l">-</button>
+</div>
 <div class="container">
+    <span id="position-span"></span>
     <div class="sizer" id="sizer"></div>
-    <a href="/" class="againBtn">Export again</a>
+    <div class="container row">
+        <a href="/" class="againBtn">Export another</a>
+        <a id="exportSprite" class="againBtn">Export sprite</a>
+    </div>
     <p>
-    <h3>Your sprite download should have started automatically, if not, then check the page permissions.</h3>
+    <h3>You can move the spine and change the size of the canvas before exporting</h3>
     </p>
     <div id="shower"></div>
 </div>
 <script type="module" defer>
-    const width = {{$real_width}};
-    const height = {{$real_height}};
+    let width = {{$real_width}};
+    let height = {{$real_height}};
     const frames = {{$frames}};
     const asset_path = "{{$asset_path}}";
     const sizer = document.getElementById('sizer');
+    const widthSpan = document.getElementById('width-span');
+    const heightSpan = document.getElementById('height-span');
+    const positionSpan = document.getElementById('position-span');
+
     sizer.style.width = `${width}px`;
     sizer.style.height = `${height}px`;
     sizer.style.transformOrigin = `top left`
 
-    showAnimation()
 
-    function showAnimation() {
-        const app = new PIXI.Application({
+    let app = {};
+    let canvas = {}
+    let savedSpineAsset = {}
+    let spine = {}
+
+    let initialPosition = {x: width * 0.5, y: height}
+    let spineInitial = {x: 0, y: 0}
+    let offset = {x: 0, y: 0}
+    let isPressed = false;
+
+    const updateSpanText = () => {
+        widthSpan.innerHTML = `${canvas.width}`;
+        heightSpan.innerHTML = `${canvas.height}`;
+        positionSpan.innerHTML = `${JSON.stringify({x: spine.x, y: spine.y})}`
+    }
+
+    const moveSpine = (event, type = 'down') => {
+        const x = event.x;
+        const y = event.y;
+
+        if (type === 'down') {
+            isPressed = true;
+            initialPosition.x = x;
+            initialPosition.y = y;
+            spineInitial.x = spine.x;
+            spineInitial.y = spine.y;
+        }
+        if (type === 'up') {
+            isPressed = false;
+            initialPosition = {x: spineInitial.x - offset.x, y: spineInitial.y - offset.y}
+        }
+
+        if (isPressed) {
+            offset.x = (initialPosition.x - x);
+            offset.y = (initialPosition.y - y);
+            spine.x = spineInitial.x - offset.x;
+            spine.y = spineInitial.y - offset.y;
+            updateSpanText()
+        }
+    }
+
+    const showAnimation = () => {
+        app = new PIXI.Application({
             height: height,
             width: width,
             backgroundAlpha: 0,
         });
 
-        let canvas = app.view;
-
+        canvas = app.view;
         PIXI.Assets.load(asset_path).then(onAssetsLoaded);
 
-        let savedSpineAsset = {}
         function onAssetsLoaded(spineAsset) {
             savedSpineAsset = spineAsset
-            // app.stage.eventMode = 'dynamic';
-            const spine = new PIXI.spine.Spine(spineAsset.spineData);
-            spine.x = width * 0.5;
-            spine.y = height;
+            app.stage.eventMode = 'dynamic';
+            spine = new PIXI.spine.Spine(spineAsset.spineData);
+            spine.x = initialPosition.x;
+            spine.y = initialPosition.y;
             app.stage.addChild(spine);
             spine.state.setAnimation(0, 'Idle', true);
-            captureSpineFrames(app, spine, frames).then((frames) => {
-                attachImagesToContainer(frames, 'shower')
-                createAndDownloadSpriteSheet(frames);
-                // Here you can use the frames array, which contains base64 data URLs
-                // You can display them, download them, or process them further
-            });
             sizer.appendChild(canvas);
+            updateSpanText()
         }
+    }
+
+    const resizeCanvas = (event) => {
+        let p = event.target.matches('.p')
+        let h = event.target.matches('.height');
+
+        let value = 5 * (p?1:-1);
+        if(h){
+            height += value;
+        } else {
+            width += value;
+        }
+
+        canvas.remove();
+        showAnimation()
+        updateSpanText()
+    }
+
+    const exportSprite = () => {
+        captureSpineFrames(app, spine, frames).then((frames) => {
+            createAndDownloadSpriteSheet(frames);
+        });
     }
 
     function createAndDownloadSpriteSheet(images, fileName = 'sprite_sheet.png') {
@@ -203,6 +284,28 @@
             container.appendChild(img);
         });
     }
+    showAnimation()
+
+    document.addEventListener('click', function (event) {
+        event.preventDefault();
+        if (event.target.matches('#exportSprite')) exportSprite();
+        if (event.target.matches('.btn-size')) resizeCanvas(event);
+    }, false);
+
+    document.addEventListener('mousedown', function (event) {
+        event.preventDefault();
+        if (event.target.matches('canvas')) moveSpine(event, 'down');
+    }, false);
+
+    document.addEventListener('mouseup', function (event) {
+        event.preventDefault();
+        if (event.target.matches('canvas')) moveSpine(event, 'up');
+    }, false);
+
+    document.addEventListener('mousemove', function (event) {
+        event.preventDefault();
+        if (event.target.matches('canvas')) moveSpine(event, 'move');
+    }, false);
 </script>
 </body>
 </html>
