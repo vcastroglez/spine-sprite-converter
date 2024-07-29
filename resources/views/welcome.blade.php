@@ -38,13 +38,13 @@
     <br>
     <label for="real_width">
         With of the animation:
-        <input type="number" id="real_width" name="real_width" value="2000" min="0"/>
+        <input type="number" id="real_width" name="real_width" value="275" min="0"/>
     </label>
     <br>
     <br>
     <label for="real_height">
         Height of the animation:
-        <input type="number" id="real_height" name="real_height" value="4824" min="0"/>
+        <input type="number" id="real_height" name="real_height" value="421" min="0"/>
     </label>
     <br>
     <br>

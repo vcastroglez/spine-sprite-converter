@@ -42,66 +42,51 @@
             justify-items: center;
             align-items: center;
         }
+
+        canvas {
+            border: 1px solid lime;
+        }
     </style>
 </head>
 <body id="body" style="background: transparent">
 <div class="container">
+    <div class="sizer" id="sizer"></div>
     <a href="/" class="againBtn">Export again</a>
     <p>
     <h3>Your sprite download should have started automatically, if not, then check the page permissions.</h3>
     </p>
-    <div class="sizer" id="sizer"></div>
     <div id="shower"></div>
 </div>
 <script type="module" defer>
-    const scale = {{$scale}};
-    const height = {{$height}};
-    const width = {{$width}};
+    const width = {{$real_width}};
+    const height = {{$real_height}};
     const frames = {{$frames}};
     const asset_path = "{{$asset_path}}";
-    const has_animation = {{$has_animation?'true':'false'}};
     const sizer = document.getElementById('sizer');
-    const real_height = {{$real_height}};
-    const real_width = {{$real_width}};
-    const scaled_height = real_height * scale;
-    const scaled_width = real_width * scale;
-
-    if (!has_animation) {
-        const img = document.createElement('img');
-        img.src = asset_path;
-        img.alt = 'Recruit pose';
-        img.style.width = `${scaled_width}px`;
-        img.style.height = `${scaled_height}px`;
-
-        sizer.appendChild(img);
-    } else {
-        showAnimation()
-    }
-    sizer.style.width = `${scaled_width}px`;
-    sizer.style.height = `${scaled_height}px`;
+    sizer.style.width = `${width}px`;
+    sizer.style.height = `${height}px`;
     sizer.style.transformOrigin = `top left`
+
+    showAnimation()
 
     function showAnimation() {
         const app = new PIXI.Application({
-            height: scaled_height,
-            width: scaled_width,
+            height: height,
+            width: width,
             backgroundAlpha: 0,
         });
 
         let canvas = app.view;
 
-        const sizerSize = sizer.getBoundingClientRect();
-        document.getElementById('body').style.width = sizerSize.width;
-        document.getElementById('body').style.height = sizerSize.height;
-
         PIXI.Assets.load(asset_path).then(onAssetsLoaded);
 
+        let savedSpineAsset = {}
         function onAssetsLoaded(spineAsset) {
-            app.stage.eventMode = 'dynamic';
+            savedSpineAsset = spineAsset
+            // app.stage.eventMode = 'dynamic';
             const spine = new PIXI.spine.Spine(spineAsset.spineData);
-            spine.x = scaled_width / 2;
-            spine.y = scaled_height / 2;
-            spine.scale.set(scale);
+            spine.x = width * 0.5;
+            spine.y = height;
             app.stage.addChild(spine);
             spine.state.setAnimation(0, 'Idle', true);
             captureSpineFrames(app, spine, frames).then((frames) => {

@@ -20,6 +20,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/test', function(){
+
+    return response()->view('converter', [
+        'frames' => 20,
+        'real_width' => 275,
+        'real_height' => 421,
+        'asset_path' => asset("/example/skeleton.skel"),
+    ]);
+});
+
 Route::post('/convert', function(Request $request){
     // Validate the incoming file. Refuses anything bigger than 2048 kilobyes (=2MB)
     $request->validate([
@@ -29,6 +39,7 @@ Route::post('/convert', function(Request $request){
         'frames' => 'required',
     ]);
     $folder_name = md5(Carbon::now()->toString());
+    File::ensureDirectoryExists(public_path("/uploads"));
     File::makeDirectory(public_path("/uploads/$folder_name"));
 
     // Store the file in storage\app\public folder
@@ -60,9 +71,5 @@ Route::post('/convert', function(Request $request){
         'real_width' => $real_width,
         'real_height' => $real_height,
         'asset_path' => asset($skel_path),
-        'has_animation' => true,
-        'scale' => $request->get('scale', 0.2),
-        'height' => $request->get('height', 1200),
-        'width' => $request->get('width', 400),
     ]);
 })->name('convert');
