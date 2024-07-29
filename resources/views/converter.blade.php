@@ -287,6 +287,7 @@
     showAnimation()
 
     document.addEventListener('click', function (event) {
+        if (event.target.matches('.againBtn')) return;
         event.preventDefault();
         if (event.target.matches('#exportSprite')) exportSprite();
         if (event.target.matches('.btn-size')) resizeCanvas(event);
