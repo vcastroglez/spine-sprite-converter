@@ -71,12 +71,11 @@
     <span id="position-span"></span>
     <div class="sizer" id="sizer"></div>
     <div class="container row">
-        <a href="/" class="againBtn">Export another</a>
+        <a href="/" class="againBtn ignore" id="againBtn">Export another</a>
         <a id="exportSprite" class="againBtn">Export sprite</a>
+        <a id="center-spine" class="againBtn">Center</a>
     </div>
-    <p>
     <h3>You can move the spine and change the size of the canvas before exporting</h3>
-    </p>
     <div id="shower"></div>
 </div>
 <script type="module" defer>
@@ -95,7 +94,7 @@
 
 
     let app = {};
-    let canvas = {}
+    let canvas = null
     let savedSpineAsset = {}
     let spine = {}
 
@@ -104,6 +103,10 @@
     let offset = {x: 0, y: 0}
     let isPressed = false;
 
+    const centerSpine = () => {
+        initialPosition = {x: width * 0.5, y: height}
+        showAnimation()
+    }
     const updateSpanText = () => {
         widthSpan.innerHTML = `${canvas.width}`;
         heightSpan.innerHTML = `${canvas.height}`;
@@ -136,6 +139,7 @@
     }
 
     const showAnimation = () => {
+        if(canvas) canvas.remove();
         app = new PIXI.Application({
             height: height,
             width: width,
@@ -169,7 +173,6 @@
             width += value;
         }
 
-        canvas.remove();
         showAnimation()
         updateSpanText()
     }
@@ -208,6 +211,7 @@
                     if (loadedImages === images.length) {
                         // All images have been drawn, now download the sprite sheet
                         const link = document.createElement('a');
+                        link.className = 'ignore';
                         link.href = canvas.toDataURL('image/png');
                         link.download = fileName;
                         document.body.appendChild(link);
@@ -287,10 +291,11 @@
     showAnimation()
 
     document.addEventListener('click', function (event) {
-        if (event.target.matches('.againBtn')) return;
+        if (event.target.matches('.ignore')) return;
         event.preventDefault();
         if (event.target.matches('#exportSprite')) exportSprite();
         if (event.target.matches('.btn-size')) resizeCanvas(event);
+        if (event.target.matches('#center-spine')) centerSpine();
     }, false);
 
     document.addEventListener('mousedown', function (event) {
