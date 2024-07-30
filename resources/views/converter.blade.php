@@ -9,7 +9,7 @@
             integrity="sha512-1NTvJOmsulWy01PqMyKBzkHmfkfZ7U1GUklB//Uqy3JRewFG+MzaFXfLF5tPrW8eELRX/Z6qzq1xsFb+rVG7Jw=="
             crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/pixi-spine@4.0.4/dist/pixi-spine.min.js" defer></script>
-    <title>Document</title>
+    <title>Spine -> Sprite exporter</title>
     <style>
         #sizer {
             height: 4829px;
