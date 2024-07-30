@@ -52,26 +52,48 @@
             justify-content: center;
         }
 
+        .flex {
+            display: flex;
+            justify-content: center;
+            gap: 3px;
+        }
+
+        .flex > input {
+            width: 90px;
+        }
+
         canvas {
             border: 1px solid lime;
+        }
+
+        #frames{
+            width: 30px;
         }
     </style>
 </head>
 <body id="body" style="background: transparent">
-
 <div class="container row">
-    With: <span id="width-span"></span>
-    <button class="btn-size width p">+</button>
-    <button class="btn-size width l">-</button>
-    Height:<span id="height-span"></span>
-    <button class="btn-size height p">+</button>
-    <button class="btn-size height l">-</button>
+    <div class="flex">
+        With:
+        <button class="btn-size width l">-</button>
+        <input type="number" id="real_width" name="real_width" value="275" min="0"/>
+        <button class="btn-size width p">+</button>
+    </div>
+    <div class="flex">
+        Height:<span id="height-span"></span>
+        <button class="btn-size height l">-</button>
+        <input type="number" id="real_height" name="real_height" value="421" min="0"/>
+        <button class="btn-size height p">+</button>
+    </div>
 </div>
 <div class="container">
     <span id="position-span"></span>
     <div class="sizer" id="sizer"></div>
     <div class="container row">
         <a href="/" class="againBtn ignore" id="againBtn">Export another</a>
+        <label for="frames">Frames:
+            <input type="number" id="frames" name="frames" value="20" min="0"/>
+        </label>
         <a id="exportSprite" class="againBtn">Export sprite</a>
         <a id="center-spine" class="againBtn">Center</a>
     </div>
@@ -79,18 +101,13 @@
     <div id="shower"></div>
 </div>
 <script type="module" defer>
-    let width = {{$real_width}};
-    let height = {{$real_height}};
-    const frames = {{$frames}};
+    let width = 275;
+    let height = 421;
+    const frames = 20;
     const asset_path = "{{$asset_path}}";
     const sizer = document.getElementById('sizer');
-    const widthSpan = document.getElementById('width-span');
     const heightSpan = document.getElementById('height-span');
     const positionSpan = document.getElementById('position-span');
-
-    sizer.style.width = `${width}px`;
-    sizer.style.height = `${height}px`;
-    sizer.style.transformOrigin = `top left`
 
 
     let app = {};
@@ -107,9 +124,10 @@
         initialPosition = {x: width * 0.5, y: height}
         showAnimation()
     }
+
     const updateSpanText = () => {
-        widthSpan.innerHTML = `${canvas.width}`;
-        heightSpan.innerHTML = `${canvas.height}`;
+        document.getElementById('real_width').value = canvas.width;
+        document.getElementById('real_height').value = canvas.height;
         positionSpan.innerHTML = `${JSON.stringify({x: spine.x, y: spine.y})}`
     }
 
@@ -138,8 +156,24 @@
         }
     }
 
+    const createCanvasListeners = () => {
+        canvas.addEventListener('mousedown', function (event) {
+            moveSpine(event, 'down');
+        });
+
+        canvas.addEventListener('mouseup', function (event) {
+            moveSpine(event, 'up');
+        });
+
+        canvas.addEventListener('mousemove', function (event) {
+            moveSpine(event, 'move');
+        });
+    }
+
     const showAnimation = () => {
-        if(canvas) canvas.remove();
+        if (canvas) canvas.remove();
+        sizer.style.width = `${width}px`;
+        sizer.style.height = `${height}px`;
         app = new PIXI.Application({
             height: height,
             width: width,
@@ -147,6 +181,7 @@
         });
 
         canvas = app.view;
+        createCanvasListeners()
         PIXI.Assets.load(asset_path).then(onAssetsLoaded);
 
         function onAssetsLoaded(spineAsset) {
@@ -160,14 +195,16 @@
             sizer.appendChild(canvas);
             updateSpanText()
         }
+
+        updateSpanText()
     }
 
     const resizeCanvas = (event) => {
         let p = event.target.matches('.p')
         let h = event.target.matches('.height');
 
-        let value = 5 * (p?1:-1);
-        if(h){
+        let value = 5 * (p ? 1 : -1);
+        if (h) {
             height += value;
         } else {
             width += value;
@@ -288,30 +325,25 @@
             container.appendChild(img);
         });
     }
+
+    document.getElementById('real_width').addEventListener('change', (event) => {
+        width = parseInt(event.target.value);
+        showAnimation()
+    })
+
+    document.getElementById('real_height').addEventListener('change', (event) => {
+        height = parseInt(event.target.value);
+        showAnimation()
+    })
+
+    document.getElementById('exportSprite').addEventListener('click', exportSprite);
+    document.getElementById('center-spine').addEventListener('click', centerSpine);
+    document.querySelectorAll('.btn-size').forEach(element => {
+        element.addEventListener('click', (event) => {
+            resizeCanvas(event)
+        })
+    })
     showAnimation()
-
-    document.addEventListener('click', function (event) {
-        if (event.target.matches('.ignore')) return;
-        event.preventDefault();
-        if (event.target.matches('#exportSprite')) exportSprite();
-        if (event.target.matches('.btn-size')) resizeCanvas(event);
-        if (event.target.matches('#center-spine')) centerSpine();
-    }, false);
-
-    document.addEventListener('mousedown', function (event) {
-        event.preventDefault();
-        if (event.target.matches('canvas')) moveSpine(event, 'down');
-    }, false);
-
-    document.addEventListener('mouseup', function (event) {
-        event.preventDefault();
-        if (event.target.matches('canvas')) moveSpine(event, 'up');
-    }, false);
-
-    document.addEventListener('mousemove', function (event) {
-        event.preventDefault();
-        if (event.target.matches('canvas')) moveSpine(event, 'move');
-    }, false);
 </script>
 </body>
 </html>

@@ -1,6 +1,5 @@
 <?php
 
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
@@ -23,9 +22,6 @@ Route::get('/', function () {
 Route::get('/test', function(){
 
     return response()->view('converter', [
-        'frames' => 20,
-        'real_width' => 275,
-        'real_height' => 421,
         'asset_path' => asset("/example/skeleton.skel"),
     ]);
 });
@@ -36,7 +32,6 @@ Route::post('/convert', function(Request $request){
         'skel_upload' => 'required',
         'atlas_upload' => 'required',
         'png_upload' => 'required',
-        'frames' => 'required',
     ]);
     File::ensureDirectoryExists(public_path("/uploads"));
 
@@ -68,9 +63,6 @@ Route::post('/convert', function(Request $request){
     File::put(public_path($png_path), $png_content);
 
     return response()->view('converter', [
-        'frames' => $frames,
-        'real_width' => $real_width,
-        'real_height' => $real_height,
         'asset_path' => asset($skel_path),
     ]);
 })->name('convert');

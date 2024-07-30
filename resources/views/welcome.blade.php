@@ -27,25 +27,5 @@
         PNG file:
         <input type="file" id="png_upload" name="png_upload"/>
     </label>
-    <br>
-    <br>
-    <label for="frames">
-        Amount of frames:
-        <input type="number" id="frames" name="frames" value="20" min="0"/>
-    </label>
-    <br>
-    <br>
-    <label for="real_width">
-        With of the animation:
-        <input type="number" id="real_width" name="real_width" value="275" min="0"/>
-    </label>
-    <br>
-    <br>
-    <label for="real_height">
-        Height of the animation:
-        <input type="number" id="real_height" name="real_height" value="421" min="0"/>
-    </label>
-    <br>
-    <br>
     <button type="submit">Convert</button>
 </form>
