@@ -69,6 +69,10 @@
         #frames{
             width: 30px;
         }
+
+        .mt-0 {
+            margin-top: 0;
+        }
     </style>
 </head>
 <body id="body" style="background: transparent">
@@ -76,18 +80,22 @@
     <div class="flex">
         With:
         <button class="btn-size width l">-</button>
-        <input type="number" id="real_width" name="real_width" value="275" min="0"/>
+        <label for="real_width"></label><input type="number" id="real_width" name="real_width" value="275" min="0"/>
         <button class="btn-size width p">+</button>
     </div>
     <div class="flex">
         Height:<span id="height-span"></span>
         <button class="btn-size height l">-</button>
-        <input type="number" id="real_height" name="real_height" value="421" min="0"/>
+        <label for="real_height"></label><input type="number" id="real_height" name="real_height" value="421" min="0"/>
         <button class="btn-size height p">+</button>
     </div>
 </div>
 <div class="container">
-    <span id="position-span"></span>
+    <div class="container row mt-0">
+        <select id="animations-select">
+        </select>
+        <span id="position-span"></span>
+    </div>
     <div class="sizer" id="sizer"></div>
     <div class="container row">
         <a href="/" class="againBtn ignore" id="againBtn">Export another</a>
@@ -108,7 +116,7 @@
     const sizer = document.getElementById('sizer');
     const heightSpan = document.getElementById('height-span');
     const positionSpan = document.getElementById('position-span');
-
+    const animationsSelect = document.getElementById('animations-select');
 
     let app = {};
     let canvas = null
@@ -119,6 +127,8 @@
     let spineInitial = {x: 0, y: 0}
     let offset = {x: 0, y: 0}
     let isPressed = false;
+    let animations = [];
+    let currentAnimation = null;
 
     const centerSpine = () => {
         initialPosition = {x: width * 0.5, y: height}
@@ -169,6 +179,25 @@
             moveSpine(event, 'move');
         });
     }
+    let alreadyImported = false;
+    const updateAnimationsSelect = () => {
+        if(!alreadyImported) {
+            animations.forEach((animation) => {
+                const name = animation.name;
+                const option = document.createElement('option');
+                const text = document.createTextNode(name)
+                option.appendChild(text);
+                option.setAttribute('value', name);
+                animationsSelect.appendChild(option);
+            })
+
+            animationsSelect.addEventListener('change', (event) => {
+                currentAnimation = event.target.value;
+                showAnimation();
+            })
+            alreadyImported = true;
+        }
+    }
 
     const showAnimation = () => {
         if (canvas) canvas.remove();
@@ -188,11 +217,17 @@
             savedSpineAsset = spineAsset
             app.stage.eventMode = 'dynamic';
             spine = new PIXI.spine.Spine(spineAsset.spineData);
+            animations = spine.spineData.animations;
+            if(!currentAnimation){
+                currentAnimation = animations[0].name;
+            }
+
             spine.x = initialPosition.x;
             spine.y = initialPosition.y;
             app.stage.addChild(spine);
-            spine.state.setAnimation(0, 'Idle', true);
+            spine.state.setAnimation(0, currentAnimation, true);
             sizer.appendChild(canvas);
+            updateAnimationsSelect();
             updateSpanText()
         }
 
