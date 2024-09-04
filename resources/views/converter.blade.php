@@ -111,7 +111,7 @@
 <script type="module" defer>
     let width = 700;
     let height = 500;
-    const frames = 20;
+    const frames = 30;
     const asset_path = "{{$asset_path}}";
     const sizer = document.getElementById('sizer');
     const heightSpan = document.getElementById('height-span');
@@ -255,7 +255,7 @@
         });
     }
 
-    function createAndDownloadSpriteSheet(images, fileName = 'sprite_sheet.png') {
+    function createAndDownloadSpriteSheet(images, fileName = 'sprite_sheet.webp') {
         // Create a canvas large enough to hold all images
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
@@ -284,7 +284,7 @@
                         // All images have been drawn, now download the sprite sheet
                         const link = document.createElement('a');
                         link.className = 'ignore';
-                        link.href = canvas.toDataURL('image/png');
+                        link.href = canvas.toDataURL('image/webp');
                         link.download = fileName;
                         document.body.appendChild(link);
                         link.click();
