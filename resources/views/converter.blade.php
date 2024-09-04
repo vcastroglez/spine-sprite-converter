@@ -109,8 +109,8 @@
     <div id="shower"></div>
 </div>
 <script type="module" defer>
-    let width = 275;
-    let height = 421;
+    let width = 700;
+    let height = 500;
     const frames = 20;
     const asset_path = "{{$asset_path}}";
     const sizer = document.getElementById('sizer');
