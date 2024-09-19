@@ -214,6 +214,7 @@
             savedSpineAsset = spineAsset
             app.stage.eventMode = 'dynamic';
             spine = new PIXI.spine.Spine(spineAsset.spineData);
+            spine.scale.set(0.6);
             animations = spine.spineData.animations;
             if(!currentAnimation){
                 currentAnimation = animations[0].name;
