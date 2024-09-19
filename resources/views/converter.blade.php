@@ -80,13 +80,13 @@
     <div class="flex">
         With:
         <button class="btn-size width l">-</button>
-        <label for="real_width"></label><input type="number" id="real_width" name="real_width" value="275" min="0"/>
+        <label for="real_width"></label><input type="number" id="real_width" name="real_width" value="410" min="0"/>
         <button class="btn-size width p">+</button>
     </div>
     <div class="flex">
         Height:<span id="height-span"></span>
         <button class="btn-size height l">-</button>
-        <label for="real_height"></label><input type="number" id="real_height" name="real_height" value="421" min="0"/>
+        <label for="real_height"></label><input type="number" id="real_height" name="real_height" value="300" min="0"/>
         <button class="btn-size height p">+</button>
     </div>
 </div>
@@ -99,9 +99,6 @@
     <div class="sizer" id="sizer"></div>
     <div class="container row">
         <a href="/" class="againBtn ignore" id="againBtn">Export another</a>
-        <label for="frames">Frames:
-            <input type="number" id="frames" name="frames" value="20" min="0"/>
-        </label>
         <a id="exportSprite" class="againBtn">Export sprite</a>
         <a id="center-spine" class="againBtn">Center</a>
     </div>
@@ -109,8 +106,8 @@
     <div id="shower"></div>
 </div>
 <script type="module" defer>
-    let width = 700;
-    let height = 500;
+    let width = 410;
+    let height = 300;
     const frames = 30;
     const asset_path = "{{$asset_path}}";
     const sizer = document.getElementById('sizer');
