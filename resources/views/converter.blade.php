@@ -249,7 +249,13 @@
 
     const exportSprite = () => {
         captureSpineFrames(app, spine, frames).then((frames) => {
-            createAndDownloadSpriteSheet(frames);
+            const name = currentAnimation
+                .replaceAll(" ",'_')
+                .replaceAll('/','_')
+                .replaceAll('-','_')
+                .replaceAll('.','_')
+                .replaceAll('__','_');
+            createAndDownloadSpriteSheet(frames, name+".webp");
         });
     }
 
